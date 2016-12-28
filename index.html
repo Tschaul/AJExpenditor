@@ -1,0 +1,192 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>AJExpenditor</title>
+<script type="text/javascript" src="js/handlebars-1.0.rc.1.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="js/jquery-ui-1.9.2.custom.min.js"></script>
+<script type="text/javascript" src="js/jquery-timing.min.js"></script>
+<script type="text/javascript" src="js/jquery-impromptu.js"></script>
+<script type="text/javascript" src="js/flot/jquery.flot.js"></script>
+<script type="text/javascript" src="js/eventstable.js"></script>
+<script type="text/javascript" src="js/plot.js"></script>
+<script type="text/javascript" src="js/ajexpenditor.js"></script>
+<link rel="stylesheet" type="text/css" href="css/main.css">
+<link rel="stylesheet" type="text/css" href="css/jquery-impromptu.css">
+<link rel="stylesheet" type="text/css" href="css/smoothness/jquery-ui-1.9.2.custom.css">
+</head>
+<body>
+
+<a id="editor-switch">Editor</a> | <a id="plot-switch">Plot</a>
+
+<hr>
+
+<div id="editor">
+
+<div id="event-new">
+
+</div>
+
+<div id="events-table">
+	
+	<div class="drafts-editor">
+			
+		Draft: select: <select name="category" id="drafts-selector">
+	
+	
+		</select>
+		
+		<input type="button" class="duplicate-button" value="duplicate">
+		<input type="button" class="save-button" value="save">
+		<input type="button" class="rename-button" value="rename">
+		<input type="button" class="delete-button" value="delete">
+		<input type="button" class="make-default-button" value="make default">
+		
+	</div>
+	
+	<form class="events-new"> </form>
+	<div class="events-head"> </div>
+	<hr>
+	<div class="events-rows"> </div>
+
+</div>
+
+</div>
+
+<div id="plot" style="display: none;">
+
+<form id="plot-selector">
+
+
+
+</form>
+<hr>
+<div id="plot-figure" style="width: 500px; height: 300px;">
+
+
+</div>
+
+</div>
+
+</body></html>
+
+<template id="template-drafts-selector">
+	
+	{{#each drafts}}
+		{{#ifCond ID ../selectedDraft}} 
+			<option value="{{ID}}" selected="yes" >{{draftDescription}}</option>
+		{{else}}
+			<option value="{{ID}}">{{draftDescription}}</option>
+		{{/ifCond}} 
+	{{/each}}
+
+</template>
+
+<template id="template-events-new">
+	
+	<div class="td"><input type="button" class="post-button" value="post"></div>
+	<div class="td"><input name="amount" type="text" size="15" maxlength="30" value="{{amount}}"></div>
+	<div class="td"><input name="description" type="text" size="15" maxlength="40" value="{{description}}"></div>
+	<div class="td"><input class="date-input" name="date" type="text" size="15" maxlength="40" value="{{date}}"></div>
+	<div class="td"><select name="category">
+	{{#each categories}}
+		{{#ifCond name ../category}} 
+			<option value="{{name}}" selected="yes" >{{longerName name}}</option>
+		{{else}}
+			<option value="{{name}}">{{longerName name}}</option>
+		{{/ifCond}} 
+	{{/each}}
+	</select></div>
+	{{#each expenditures}}
+		<div class="td"><input type="text" size="15" maxlength="40" name="expenditure_{{person}}" value="{{amount}}"></div>
+	{{/each}}
+	{{#each ious}}
+		<div class="td"><input type="text" size="15" maxlength="40" name="iou_{{borrower}}_{{creditor}}" value="{{amount}}"></div>	
+	{{/each}}
+	
+ 
+</template>
+
+<template id="template-events-head">
+
+	
+	<div class="td"></div>
+	<div class="td">Betrag</div>
+	<div class="td">Beschreibung</div>
+	<div class="td">Datum</div>
+	<div class="td">Kategorie</div>
+	{{#each expenditures}}
+		<div class="td">{{fullName person}}</div>
+	{{/each}}
+	{{#each ious}}
+		<div class="td">{{fullName borrower}} schuldet {{fullName creditor}}</div>	
+	{{/each}}
+	
+	
+</template>
+
+<template id="template-events-rows">
+
+	{{#each events}}
+
+	<div class="events-row" id="event-{{ID}}">
+		<div class="td"><input type="button" class="delete-button" value="delete"></div>
+		<div class="td editable" field="amount" value="{{amount}}">{{amount}}</div>
+		<div class="td editable" field="description" value="{{description}}">{{description}}</div>
+		<div class="td editable" field="date" value="{{date}}">{{date}}</div>
+		<div class="td editable" field="category" value="{{category}}">{{longerName category}}</div>
+		{{#each expenditures}}
+			<div class="td editable" field="expenditure_{{person}}" value="{{amount}}">{{amount}} &Delta; {{toFixed2 delta}} &Sigma; {{toFixed2 saldo}}</div>
+		{{/each}}
+		{{#each ious}}
+			<div class="td editable" field="iou_{{borrower}}_{{creditor}}" value="{{amount}}">{{amount}} &Delta; {{toFixed2 delta}} &Sigma; {{toFixed2 saldo}}</div>	
+		{{/each}}
+	</div>
+	
+	{{/each}}
+	
+</template>
+
+	<template id="template-plot-selector">
+
+	<input type="button" class="plot-button" value="plot">
+	interval:
+	<select name="interval">
+
+		<option value="dayly">dayly</option>
+		<option value="weekly" selected="yes" >weekly</option>
+		<option value="monthly">monthly</option>
+
+	</select>
+	person:
+	<select name="person">
+	<option value="all" selected="yes" >all</option>
+	{{#each people}}
+		<option value="{{name}}">{{fullName name}}</option>
+	{{/each}}
+	</select>
+	<br>
+	categories:
+	{{#each categories}}
+		<input value="1" name="{{name}}" type=checkbox checked=checked>{{longerName name}}
+	{{/each}}
+
+</template>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

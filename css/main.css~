@@ -1,0 +1,38 @@
+* {
+	font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
+	font-size: 10pt;
+}
+
+template {
+	display: none;
+}
+
+a {
+	cursor: pointer;
+}
+
+.td {
+
+	display: inline-block;
+	width: 150px;
+	padding: 10px;
+
+}
+
+.events-row{
+
+	border-bottom: 1px solid #aaa;
+
+}
+
+.th {
+
+	display: block;
+
+}
+
+.tr {
+
+	display: block;
+
+}
