@@ -1,1 +1,1 @@
-[]
+[{"amount":"0.0","description":"Genesis Expenditure","date":"2013-01-01","category":"11","expenditures":[{"person":"andi","amount":"0","delta":0,"saldo":0},{"person":"julian","amount":"0","delta":0,"saldo":0}],"ious":[{"borrower":"andi","creditor":"julian","amount":"*-1","delta":-0,"saldo":0}],"ID":29}]
